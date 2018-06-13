@@ -1,0 +1,8 @@
+Tomcat is http server and servlet container.Even we can run jsp becuase internally jsp will be converted to servlet.Apcahe tomcat is free.
+Other servers available are jetty.
+Glassfish,JBOSS are application servers.
+For enterprise application we use application server whereas webserver provides web environment for servlets,jsp,html
+Superior is application server which provides support for servlets,jsp,html,jms,ejb.
+Application server automatically has inbuilt webserver.We need to install webserver separatley if you are not satisfied with application server which has web server.
+Web application can be developed using web relatedtechnologies like servlets,jsp,html,css.
+Entreprise application can be developed using java/jee,ejb,jms
