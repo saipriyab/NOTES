@@ -1,0 +1,118 @@
+Servlets
+-------------
+Deployment descriptor is web.xml.
+HTML is client side and Servlet is server side.
+
+Two tags in web.xml
+<servlet> -class name
+<servlet-mapping> -url pattern
+
+from 3.0 we can avoid web.xml we can use annotations
+@WebServlet("/abc.html")
+
+If we need to send dynamic content we use servlets.
+Tomcat works on http server.They will use 8080 port as default.
+Apache tomcat is free.
+
+JBOSS,Glassfish is application server
+
+Servlet is an interface
+GenericServlet is an abstract class.
+GenericServlet is a super class of HttpServlet class which is also abstract class
+
+Generic Servlet is protocol independent whereas HttpServlet is protocol dependent
+Response format can be of anytype(text,html,video,json etc.,)
+Tomcat gives two objects request and response
+HttpServletRequest and HTTPServletResponse both are interfaces
+get is not secure as it reveals and post is secure.
+Get is more faster than post as for post we need to store data in local storage and then fetch the value whereas
+get method directly fetches from the address bar.
+
+Role of web container
+----------------------
+1.communication support
+2.Lifecycle management
+3.Multithreading support
+4.Security
+5.JSP Support
+
+The container know which servlet the client has requested for
+
+A servlet has 3 names
+1.client known URL name
+2.Deployer known secret internal name
+3.Actual file name
+
+concrete class definition
+------------------------
+A concrete class is a class that has an implementation for all of its methods that were inherited from abstract or implemented via interfaces. It also does not define any abstract methods of its own.
+
+
+To call one servlet from another servlet
+
+RequestDispatcher rd=request.getRequestDispatcher("SecondServlet");
+rd.forward(request,response);-makes client know we are using first servlet
+RequestDispatcher is a part of HttpServlet
+
+response.sendRedirect("SecondServlet");-makes client know we are using second servlet
+
+Handling sessions
+---------------
+
+to use session
+----------------
+public class FirstServlet
+{
+....
+STring str=request.getParameter("t1");
+HttpSession session=request.getSession();
+session.setAttribute("t1",str");
+response.sendRedirect("SecondServlet");
+}
+
+public class SecondServlet extends HttpServlet
+{
+public void doGet(HttpServletRequest request,HttpServetResponse response)
+{
+HttpSession session=request.getSession();
+String str=session.getAttribute("t1").toString();-To convert object to string
+S.O.P(str);
+}
+}
+}
+
+
+Using cookies
+-------------
+STring str=request.getParameter("t1");
+Cookie cookie=new Cookiw("t1",str);
+response.addCookie(cookie);
+response.sendRedirect("SecondServlet");
+
+public class SecondServlet extends HttpServlet
+{
+public void doGet(HttpServletRequest request,HttpServetResponse response)
+{
+HttpSession session=request.getSession();
+Cookie cookies[]=request.getCookies();
+String str=null;
+for(Cookie c:cookies)
+{
+if(c.getName().equals("t1))
+{
+str=c.getVlaue();
+}
+}
+}
+}
+
+
+using url rewriting
+-----------------
+FirstServlet:
+String str=request.getParameter("t1");
+response.sendRedirect("SecondServlet"?t1="+str);
+
+DISADVANTAGE:
+above works with get method only
+
