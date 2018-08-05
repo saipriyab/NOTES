@@ -1,0 +1,8 @@
+STEPS TO UPLOAD IN GIT
+---------------------
+1.First download git and you can check whether git is istalled or not by using git --version.
+2.In eclipse fo rthe project which you need to push click on team and then share project
+3.Then first create local repository and then clcik finish
+4.then under team choose commit.Push all files and then give commit message.
+5.Check the gitlink and give email and pwd of git
+5.Then ccik finish
