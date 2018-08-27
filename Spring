@@ -4,7 +4,7 @@ Spring is open source framework
 Spring Dependency injection gluee the clasess keeping them independent
 Loosecoupled in spring is acheived by dependency injection
 IOC gives the contrl of creating objects to the spring container
-
+Loose coupling is used to glue the classes keeping them independent.
 
 Spring provides five types of collections .They are:
 ---------------------------------------------------
@@ -13,3 +13,13 @@ Spring provides five types of collections .They are:
 3.Set
 4.Map
 5.Props
+
+Injecting null and empty value
+
+<bean id="myBean" class="MyBean">
+<property name="userName" vlaue=""/>
+</bean>
+
+<bean id="myBean" class="myBean">
+<property name="userName"><null/></property>
+</bean>
