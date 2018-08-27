@@ -4,3 +4,12 @@ Spring is open source framework
 Spring Dependency injection gluee the clasess keeping them independent
 Loosecoupled in spring is acheived by dependency injection
 IOC gives the contrl of creating objects to the spring container
+
+
+Spring provides five types of collections .They are:
+---------------------------------------------------
+1.Array
+2.List
+3.Set
+4.Map
+5.Props
