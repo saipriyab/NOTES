@@ -23,3 +23,5 @@ Injecting null and empty value
 <bean id="myBean" class="myBean">
 <property name="userName"><null/></property>
 </bean>
+
+Spring namespace is used as an alertnative to property tag
