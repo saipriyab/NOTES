@@ -25,3 +25,12 @@ Injecting null and empty value
 </bean>
 
 Spring namespace is used as an alertnative to property tag
+
+
+Spring autowiring modes:
+1.no
+2.byName
+3.byType
+4.constructor
+
+If we have both constructor and setter ,setter will ovverride the properties of constructor
