@@ -1,0 +1,551 @@
+Dependency Injection: Never create an ojject insde another class using a new operator
+
+class Restaurant
+{
+Tea t=new Tea();
+public void prepareHotDrink
+{
+tea.prepareTea();
+}
+}
+
+Dependency injection principle makes Restaurant class to use tea class without using object directly
+
+For example coffee preparation requires beans,milk,sugar,mug,kettle
+
+choice 1:you prepare coffee object yourself and then drink it
+choice 2:You ask expert to prepare coffeee for you and just enjoy it
+
+when restaurant oject is created the tea object will be created and provided to it form outsiide by some third party program
+
+
+interface IHotDrink
+{
+public void prepare Tea();
+}
+
+class Tea implements IHotDrink
+{
+public void prepareTea()
+{
+}
+}
+
+class Restaurant
+{
+IHotDrink hotDrink;
+Restaurant(IHotDrink hotDrink)
+{
+hotDrink=this.hotDRink;
+}
+public void prepareHotDrink
+{
+hotDrink prepareTea();
+
+}
+}
+
+Spring dependency injection can be done through setter and constructor
+
+public interface IHotDRink
+{
+public void prepareHotDrink();
+}
+
+public class Tea implements IHotDrink
+{
+public void prepareHotDrink()
+{
+System.out.println("hello");
+}
+}
+}
+
+
+public class Restaurant
+{
+IHotDRink hotDrink;
+Restaurant(IHotDrink hotDRink)
+{
+this.hotDrink=hotDrink;
+}
+public void prepareHotDrink()
+{
+hotDrink.prepareHotDrink();
+}
+}
+
+
+spring-config.xml
+---------------------
+<bean id="restaurantBean" class="org.gontuseries.springcore.Restaurant">
+<constructor-arg ref="teaBean"/>
+</bean>
+
+<bean id="teaBean" class="org.gontuseries.springcore.Tea"/>
+</beans>
+
+Test class
+---------
+ApplicationContext a=new ClassPathXmlApplicationContext("spring-config.xml");
+Restaurant r2=(Restaurant)a.getBean("restaurantBean");
+r2.prepareHotDrink();
+
+
+using setter method
+----------------------
+public class Restaurant
+{
+IHotDRink hotDrink;
+public void setHotDrink(IHotDRink hotDrink)
+{
+this.hotDrink=hotDrink;
+}
+public void prepareHotDrink()
+{
+hotDrink.prepareHotDrink();
+}
+}
+
+spring-config.xml
+---------------------
+<bean id="restaurantBean" class="org.gontuseries.springcore.Restaurant">
+<property name="hotDrink" ref="teaBean"/>
+</bean>
+
+<bean id="teaBean" class="org.gontuseries.springcore.Tea"/>
+</beans>
+
+
+Dependency Injection with collection property
+------------------------------------
+Set,List,Map
+
+We just need to declare a collection with setter method in java class and provide its value in spring
+configuration file
+
+public class Restaurant
+{
+private List restaurantWaitersList;
+public void setRestaurantWaitersList(List restaurantWaitersList)
+{
+this.restaurantWaitersList=restaurantWaitersList;
+}
+public void displayWaitersNames()
+{
+S.O.P("all waiters"+restaurantWaitersList);
+}
+}
+
+spring-config.xml
+---------------------
+<bean id="restaurantBean" class="org.gontuseries.springcore.Restaurant">
+<property name="restaurantWaitersList">
+<list>
+<value>Mr.ABC</value>
+<value>Mr.DEF</value>
+<value>Mr.XYZ</value>
+</list>
+</property>
+</bean>
+</beans>
+
+
+Datasource
+-----------
+Spring requires the connection info to the persistence mechanism.This connection info is specified in form of datasource
+The datasource may also be created by the application server the developer then uses JNDI to access the daatasource
+
+JDBCTemplate
+-------------
+The JDBCTemplate class executes SQL queries,update statements and stored procedure calls.Instance of JDBCTemplte are threadsafe
+So youcan configure single instance of JDBCTemplate and then safely inject this shared reference int 
+multiple DAO's.
+
+RowMapper
+----------
+It is interface used by JDBCTemplate to map a resultset row.The implementation of this interface maps a resultset row to result object.No need to worry about catching exceptions.
+
+T MapRow(ResultSet rs,int rowNum)throws SQLException
+
+This is JDBCTemplate method that uses it
+public List query(String sql,RowMapper rowMapper)
+
+
+SPRING JDBC Template eg
+-----------------------
+package com.infotech.model;
+public class Employee
+{
+private int employeeId;
+private String employeeName;
+private String email;
+private double salary;
+private String gender;
+//generate setters and getters
+}
+
+Beans.xml
+----------
+<beans ...>
+To enable annotations
+<context:component-scan base-package="com.infotech.dao.impl"/>
+<context:component-scan base-package="com.infotech.service.impl"/>
+
+<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDatasource">
+/*<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl"/>
+<property name="username" value="scott"/>
+<property name="password" value="tiger"/>*/
+<property name="driverClassName" value="${db.driverClassName}"/>
+<property name="url" value="${db.url}"/>
+<property name="username" value="${db.username}"/>
+<property name="password" value="${db.password}"/>
+</bean>
+
+<bean id="employeeService" class="com.infotech.service.impl.EmployeeServiceImpl">
+<property name="employeeDAO" ref="employeedao"/>
+</bean>
+
+/*/*<bean id="employeedao" class="com.infotech.dao.impl.EmployeeDAOImpl">
+<property name="datasource" ref="datasource"/>
+</bean>*/
+
+<bean id="employeedao" class="com.infotech.dao.impl.EmployeeDAOImpl">
+<property name="jdbcTemplate" ref="jdbcTemplate"/>
+</bean>*/
+
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+<constructor-arg name="datasource" ref="datasource">
+</bean>
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+<property name="locations">
+<list>
+<value>database.properties</value>
+</list>
+</property>
+</bean>
+</beans>
+
+
+-------------
+package com.infotech.service;
+public interface EmployeeService
+{
+public abstract void addEmployee(Employee employee);
+public abstract Employee fetchEmployeeById(int employeeId);
+public abstract void deleteEmployeeById(int employeeId);
+public abstract void updateEmployeeEmailById(String newEmail,int employeeId);
+public abstract List<Employee> getAllEmployeesInfo();
+}
+------------------
+package com.infotech.service.impl;
+@Service("employeeService")
+public class EmployeeServiceImpl implements EmployeeService
+{
+@Autowired
+private EmployeeDAO employeeDAO;
+//setter and getter
+public void addEmployee(Employee employee)
+{
+employeeDAO.createEmployee(employee);
+}
+public  Employee fetchEmployeeById(int employeeId)
+{
+return employeeDAO.getEmployeeById(employeeID);
+}
+public void deleteEmployeeById(int employeeId)
+{
+return employeeDAO.eleteEmployeeById(employeeId);
+}
+public void updateEmployeeEmailById(String newEmail,int employeeId)
+{
+return employeeDAO.updateEmployeeEmailById(newEmail,employeeId);
+}
+public List<Employee> getAllEmployeesInfo()
+{
+return employeeDAO.getAllEmployeesDetails();
+}
+}
+
+---------------
+package com.infotech.dao;
+public interface EmployeeDAO
+{
+public abstract void createEmployee(Employee employee);
+public abstract Employee getEmployeeById(int employeeId);
+public abstract void deleteEmployeeById(int employeeId);
+public abstract void updateEmployeeEmailById(String newEmail,int employeeId);
+public abstract List<Employee> getAllEmployeesDetails();
+}
+
+-------------
+package com.infotech.dao.impl;
+@Repository("")-DAO layer we can instatiate
+public class EmployeeDAOImpl implements EmployeeDAO
+{
+/*private Datasource datasource;*/
+@Autowired
+private JdbcTemplate jdbcTemplate;
+/*public void setDataSource(DataSource dataSource)
+{
+this.datasource=datasource;
+this.jdbcTemplate=new JdbcTemplate(datasource);
+}*/
+public void setJdbcTemplate(JdbcTemplate jdbcTemplate)
+{
+this.jdbcTemplate=jdbcTemplate;
+}
+public void createEmployee(Employee employee)
+{
+String sql="INSERT INTO employee_table(employee_name,email,gender,salary) VALUES(?,?,?,?)";
+int update=jdbcTemplate.update(sql,new Object[]{employee.getEmployeeName(),employee.getEmployeeEmail(),employee.getEmployeeGender(),employee.getEmployeeSalary()});
+if(update>0)
+S.O.P("created");
+}
+public Employee getEmployeeById(int employeeId)
+{
+String sql="SELECT * FROM employee_table WHERE employee_id=?";
+Employee e=jdbcTemplte.queryForObject(sql,new EmployeeRowMapper(),employeeId);
+return e;
+}
+public void deleteEmployeeById(int employeeId)
+{
+String sql="DELETE FROM  employee_table WHERE employee_Id=?";
+int update=jdbcTemplte.update(sql,employeeId);
+if(update>0)
+S.O.P("employee deleted");
+}
+ public List<Employee> getAllEmployeesDetails()
+{
+String sql="SELECT * from employee_table";
+return jdbcTemplate.query(sql,new EmployeeRowMapper());
+}
+public updateEmployeeEmailById(String newEmail,int employeeId)
+{
+String sql="UPDATE employee_table set email=? WHERE employee_Id=?";
+int update=jdbcTemplte.update(sql,newEmail,employeeId);
+}
+}
+------------
+public class EmployeeRowMapper implements RowMapper<Employee>
+{
+public Employee mapRow(ResultSet rs,int rowNum)throws SQLException
+{
+Employee employee=new Employee();
+employee.setEmail(rs.getString("email"));
+employee.setEmployeeId(rs.getInt("employee_id"));
+employee.setEmployeeName(rs.getString("employee_name));
+employee.setSalary(rs.getDouble("salary"));
+return employee;
+}
+}
+-------------
+package com.infotech.client;
+public class Test
+{
+PSVM()
+{
+AbstractApplicationContext ctx=new ClassPathXmlApplicationContext("Beans.xml");
+EmployeeService employeeService=ctx.getBean("employeeService",EmployeeServiceImpl.class);
+Employee e1=employeeService.fetchEmployeeById(10);
+}
+}
+
+database.properties
+----------------------
+db.driverClassName=oracle.jdbc.driver.OracleDriver
+db.url=jdbc:oracle:thin:@localhost:1521:orcl
+db.username=scot
+db.password=tiger
+
+
+@Component
+------------
+Makes a java class as a bean so the component scanning mechanism of spring can pick it up and pull into application context 
+
+Spring IOC Containers
+---------------------
+1.BeanFcatory container
+2.Applicationcontext
+
+BeanFactory provides
+1.Provides DI/IOC mechanism for spring
+2.Built upon factory design pattern
+3.It loads beans definition from XML
+4.Instatiates beans when requester
+
+Resource r=new FileSystemResource("beans.xml");
+BeanFcatory f=new XmlBeanFactort(r);
+
+
+Dependency Injection helps to wire different classes at the same time keeping them together
+The responsisblity of creating objects is shifted to ioc containers
+
+Dependency Injection is of two types
+1.Constructor based
+2.Setter based
+
+
+Methods of BeanFcatory
+----------------------
+Object getBean(String)
+boolean containsBean(String)
+Object getBean(String,class)
+Class getType(STring name)
+
+BeanFactory is a lazy where objects are created on demand whereas using application context is a early one
+
+By default scope is singleton
+
+
+Spring IOC Containers
+---------------------
+1.BeanFactory Container
+2.Application context container
+
+Resource is an interface
+FileSystemResource is one of the implementor of it
+
+ApplicationContext is present in org.springframework.context.*;
+
+BeanFactory is used ofr light weight applications like mobile devices or applet based applications where data
+and volume is significant
+
+
+The implementations of ApplicationContext are
+1.ClassPathXmlApplicationContext
+2.FileSystemXmlApplicationContext
+3.WebXmlApplicationContext
+
+The beans in spring container can be created in seven scopes.They are:
+1.singleton
+2.Prototype
+3.Request
+4.Session
+5.Application
+6.Global-session
+7.websocket
+
+
+singleton or prototype for core spring application
+request,session,application for web based
+global-session for portlet
+
+singleton-By default it is singleton once it is created and stored in cache
+prototype-every time it is created when requested
+
+
+@PostConstruct and @PreDestroy are a part of JSR 
+
+Spring offers five types of collection configuration:
+<array>
+<list>
+<set>
+<map>
+<props>
+
+To inject empty string we can do
+<bean id="myBean" class="MyBean">
+<property name="userName" value=""/>
+</bean>
+To inject null value we can do
+<bean id="myBean" class="MyBean">
+<property name="userName"><null/></property>
+</bean>
+
+Autowiring modes
+----------------
+1.no
+3.byname
+4.bytype-looks at datatype of the property
+5.constructor-similar to bytype
+
+Limitations of autowiring
+---------------------
+1.overriding possibilty
+you can still specify dependencies using constructir and property 
+2.Primitive data types
+cannot autowire simple primitives sucha s primitives and strings
+3.Confusing nature
+
+EventHandling in spring
+--------------------------
+The eventhandlig in applictaioncontext is provided by eventhandling
+1.ContextRefreshedEvent
+2.ConextStartedEvent
+3.ContextStoppedEvent
+4.ContextClosedEvent
+5.RequestHandledEvent
+
+Listening to context events
+--------------------
+ApplicationListener interface has one method onApplicationEvent
+
+
+AbstractApplicationContext is an abstract class and ApplicationContext is an interface
+
+BeanFcatory i sthe basic container whereas ApplicationContext is advanced container
+
+ApplicationContext extends BeanFcatory
+
+
+Spring Java Based Configuration
+-------------------------------
+Java based configuration option enables to write mmost of spring configuration
+without xml but with the help of java annotations
+
+
+The central artifact in Spring Java Configuration support is @Configuration
+principally of @Bean annotated class.
+
+Annotating a class with @Configuration indicates that class can be used by Spring IOC coNTAINER
+
+@Bean annotation
+----------------
+It is a method leven annotation and direct analog of XML<bean> element.It supports
+some of the attributes offered by </bean> such as init-method,destroy-method,autowiring and name
+We can use @Bean in @Configuration annotated or in @Component annotated class
+
+
+@Configuratin
+public class AppConfig
+{
+@Bean
+public TransferService transferService()
+{
+return new TransferServiceImpl();
+}
+}
+Here TransferService is an interface and TransferServiceImpl is the implementation
+
+
+The preceeding configuration is exactly equivalent to
+
+<beans>
+<bean name="transferService" class="com.acme.TransferServiceImpl"/>
+</beans>
+
+
+When @Beans have dependencies on one another expressing that dependency is 
+as simple as having one bean method call another
+
+@Configuration
+public class AppConfig
+{
+@Bean
+public Foo foo()
+{
+return new Foo(bar());
+}
+@Bean
+public Bar bar()
+{
+return new Bar();
+}
+}
+In this example foo bean receives a reference to bar via constructor injection
+
+
+@Primary is used  to avoid confusion when we have two beans
+@Qualifier is used to avoid confusion along with name instead of @Primary
