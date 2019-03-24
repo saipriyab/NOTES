@@ -1,0 +1,5 @@
+In netbeans if we want to clone click on team->clone->specify the git link and credentials ->create folder in local where you want the code 
+to be placed ,give that path and select ok.
+
+For attaching debugger in netbeans place all the breakpoints and then select debug->attach debugger->specify port(8787) normally the port 
+where jboss is running
