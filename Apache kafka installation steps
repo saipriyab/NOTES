@@ -1,0 +1,14 @@
+1.After downloading apache kafka and unzipping the file
+2.Copy all the folders like bin,config,libs etc to a folder called kafka in D drive folder
+3.Update Server.properties file of config folder ,change to log.dirs=d:/kafka/kafka-logs
+4.Update zookeeper.properties file of config folder to data ,change to dataDir=d:/kafka/zookeeper-data
+4.For windows OS always we have to run bat files inside windows folder bat files
+5.Always we need to start zookeeper first before kafka
+6.Command to run zookeeper
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+we can see zookeeper started at 2181 port
+7.Open new terminal and Command to run kafka
+.\bin\windows\kafka-server-start.bat .\config\server.properties
+8.We have to create a new queue using the below command
+.\bin\kafka-topics.sh --create --topic test-topic -zookeeper localhost:2181 --replication-factor 1 --partitions 4
+
